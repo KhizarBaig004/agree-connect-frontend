@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,9 +8,26 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export function ProductForm() {
+interface ProductFormProps {
+  productId?: string;
+}
+
+interface ProductData {
+  name: string;
+  category: string;
+  price: string;
+  quantity: string;
+  unit: string;
+  description: string;
+  quality: string;
+  image: string;
+}
+
+export function ProductForm({ productId }: ProductFormProps) {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const isEditMode = !!productId;
+  
+  const [formData, setFormData] = useState<ProductData>({
     name: '',
     category: '',
     price: '',
@@ -21,9 +38,37 @@ export function ProductForm() {
     image: '',
   });
 
+  // Load product data from localStorage when in edit mode
+  useEffect(() => {
+    if (isEditMode && typeof window !== 'undefined') {
+      const savedProduct = localStorage.getItem('editProduct');
+      if (savedProduct) {
+        try {
+          const product = JSON.parse(savedProduct);
+          setFormData({
+            name: product.name || '',
+            category: product.category || '',
+            price: product.price || '',
+            quantity: product.quantity || '',
+            unit: product.unit || 'kg',
+            description: product.description || '',
+            quality: product.quality?.toString() || '8',
+            image: product.image || '',
+          });
+        } catch (error) {
+          console.error('Error parsing product data:', error);
+        }
+      }
+    }
+  }, [isEditMode]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
+    // Clear edit product from localStorage after submission
+    if (isEditMode && typeof window !== 'undefined') {
+      localStorage.removeItem('editProduct');
+    }
     router.push('/farmer/products');
   };
 
@@ -147,7 +192,9 @@ export function ProductForm() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" className="flex-1">Add Product</Button>
+            <Button type="submit" className="flex-1">
+              {isEditMode ? 'Update Product' : 'Add Product'}
+            </Button>
             <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
             </Button>

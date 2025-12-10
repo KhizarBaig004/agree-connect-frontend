@@ -10,6 +10,9 @@ export const env = {
   // App Configuration
   APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   
+  // Google Maps API
+  GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+  
   // Environment
   NODE_ENV: process.env.NODE_ENV || 'development',
   IS_PRODUCTION: process.env.NODE_ENV === 'production',
