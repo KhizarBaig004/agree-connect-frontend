@@ -7,23 +7,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '@/components/ui/card';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export function OrdersList() {
+export function BuyerOrdersList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const allOrders = [
-    { id: '#1234', buyer: 'ABC Company', crop: 'Wheat', quantity: '500 kg', date: '2024-01-15', status: 'Pending', amount: '₹25,000' },
-    { id: '#1235', buyer: 'XYZ Corp', crop: 'Rice', quantity: '300 kg', date: '2024-01-14', status: 'Confirmed', amount: '₹18,000' },
-    { id: '#1236', buyer: 'Food Mart', crop: 'Corn', quantity: '200 kg', date: '2024-01-13', status: 'Shipped', amount: '₹12,000' },
-    { id: '#1237', buyer: 'Green Valley', crop: 'Tomatoes', quantity: '150 kg', date: '2024-01-12', status: 'Delivered', amount: '₹7,500' },
-    { id: '#1238', buyer: 'Fresh Foods', crop: 'Potatoes', quantity: '400 kg', date: '2024-01-11', status: 'Pending', amount: '₹20,000' },
-    { id: '#1239', buyer: 'Market Hub', crop: 'Onions', quantity: '250 kg', date: '2024-01-10', status: 'Confirmed', amount: '₹10,000' },
-    { id: '#1240', buyer: 'City Stores', crop: 'Carrots', quantity: '180 kg', date: '2024-01-09', status: 'Shipped', amount: '₹9,000' },
-    { id: '#1241', buyer: 'Super Mart', crop: 'Wheat', quantity: '600 kg', date: '2024-01-08', status: 'Pending', amount: '₹30,000' },
-    { id: '#1242', buyer: 'Local Market', crop: 'Rice', quantity: '350 kg', date: '2024-01-07', status: 'Confirmed', amount: '₹21,000' },
-    { id: '#1243', buyer: 'Farm Direct', crop: 'Corn', quantity: '220 kg', date: '2024-01-06', status: 'Delivered', amount: '₹13,200' },
+    { id: '#1234', seller: 'Green Valley Farms', crop: 'Wheat', quantity: '500 kg', date: '2024-01-15', status: 'Pending', amount: '₹25,000' },
+    { id: '#1235', seller: 'Farm Fresh', crop: 'Rice', quantity: '300 kg', date: '2024-01-14', status: 'Confirmed', amount: '₹18,000' },
+    { id: '#1236', seller: 'Organic Fields', crop: 'Corn', quantity: '200 kg', date: '2024-01-13', status: 'Shipped', amount: '₹12,000' },
+    { id: '#1237', seller: 'Fresh Harvest', crop: 'Tomatoes', quantity: '150 kg', date: '2024-01-12', status: 'Delivered', amount: '₹7,500' },
+    { id: '#1238', seller: 'Mountain Farms', crop: 'Potatoes', quantity: '400 kg', date: '2024-01-11', status: 'Pending', amount: '₹20,000' },
   ];
 
   // Filter orders based on search and status
@@ -31,7 +26,7 @@ export function OrdersList() {
     return allOrders.filter((order) => {
       const matchesSearch = 
         order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.buyer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        order.seller.toLowerCase().includes(searchQuery.toLowerCase()) ||
         order.crop.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesStatus = 
@@ -51,7 +46,6 @@ export function OrdersList() {
 
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
 
-  // Reset to first page when filters change
   const handleStatusChange = (value: string) => {
     setStatusFilter(value);
     setCurrentPage(1);
@@ -84,7 +78,7 @@ export function OrdersList() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search by order ID, buyer, or crop..."
+            placeholder="Search by order ID, seller, or crop..."
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-10"
@@ -113,7 +107,7 @@ export function OrdersList() {
                   Order ID
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Buyer
+                  Seller
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Crop
@@ -138,41 +132,41 @@ export function OrdersList() {
             <tbody className="divide-y divide-border">
               {paginatedOrders.length > 0 ? (
                 paginatedOrders.map((order) => (
-                <tr key={order.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium text-foreground">{order.id}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-foreground">{order.buyer}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-foreground">{order.crop}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-foreground">{order.quantity}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-muted-foreground">{order.date}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-semibold text-foreground">{order.amount}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClass(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      {order.status === 'Pending' && (
-                        <Button size="sm" className="h-8">Confirm</Button>
-                      )}
-                      {order.status === 'Confirmed' && (
-                        <Button size="sm" variant="outline" className="h-8">Mark Ready</Button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+                  <tr key={order.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm font-medium text-foreground">{order.id}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-foreground">{order.seller}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-foreground">{order.crop}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-foreground">{order.quantity}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-muted-foreground">{order.date}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm font-semibold text-foreground">{order.amount}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClass(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        {order.status === 'Delivered' && (
+                          <Button size="sm" variant="outline" className="h-8">Review</Button>
+                        )}
+                        {order.status === 'Shipped' && (
+                          <Button size="sm" variant="outline" className="h-8">Track</Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
                 ))
               ) : (
                 <tr>

@@ -11,6 +11,12 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  phone?: string;
+  location?: string;
+  zipcode?: string;
+  profilePic?: string;
+  latitude?: number;
+  longitude?: number;
   createdAt?: string;
   updatedAt?: string;
 }

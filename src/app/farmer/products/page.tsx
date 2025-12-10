@@ -8,7 +8,10 @@ export default function ProductsPage() {
     <RoleGuard allowedRoles={['seller', 'admin']}>
       <div className="py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">My Products</h1>
+          <div>
+            <h1 className="text-3xl font-bold">My Products</h1>
+            <p className="text-muted-foreground mt-1">Manage your products and publish them to the market</p>
+          </div>
           <Link href="/farmer/products/new">
             <Button>Add New Product</Button>
           </Link>

@@ -15,16 +15,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTheme } from '@/components/theme-provider';
-import { usePathname } from 'next/navigation';
-import { Moon, Sun, LogOut, User } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Moon, Sun, LogOut, User, ShoppingCart } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { CartDrawer } from '@/components/buyer/cart-drawer';
 
 export const Header = () => {
   const { user, logout } = useAuth();
   const { canAccessRoute } = useRole();
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
+  const router = useRouter();
   const [isDark, setIsDark] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -38,6 +42,32 @@ export const Header = () => {
       attributeFilter: ['class'],
     });
     return () => observer.disconnect();
+  }, []);
+
+  // Update cart count
+  useEffect(() => {
+    const updateCartCount = () => {
+      const savedCart = localStorage.getItem('buyer_cart');
+      if (savedCart) {
+        try {
+          const cart = JSON.parse(savedCart);
+          setCartItemCount(cart.length);
+        } catch {
+          setCartItemCount(0);
+        }
+      } else {
+        setCartItemCount(0);
+      }
+    };
+
+    updateCartCount();
+    window.addEventListener('storage', updateCartCount);
+    window.addEventListener('cartUpdated', updateCartCount);
+
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -71,11 +101,26 @@ export const Header = () => {
         )}
 
         <div className="flex items-center gap-4">
+          {user && (user.role === 'buyer' || user.role === 'admin') && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="relative"
+              onClick={() => setCartOpen(true)}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+                  {cartItemCount > 9 ? '9+' : cartItemCount}
+                </span>
+              )}
+            </Button>
+          )}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="cursor-pointer focus:outline-none">
-                  <Avatar name={user.name} size="sm" />
+                  <Avatar name={user.name} size="sm" imageUrl={user.profilePic} />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -86,9 +131,12 @@ export const Header = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem 
+                  className="cursor-pointer"
+                  onClick={() => router.push('/settings')}
+                >
                   <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                  <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
@@ -125,6 +173,9 @@ export const Header = () => {
           )}
         </div>
       </div>
+      {user && (user.role === 'buyer' || user.role === 'admin') && (
+        <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
+      )}
     </header>
   );
 };

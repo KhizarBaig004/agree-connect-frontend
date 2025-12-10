@@ -72,11 +72,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     roles: ['seller', 'admin'],
   },
   {
-    label: 'Inventory',
-    href: '/farmer/inventory',
-    roles: ['seller', 'admin'],
-  },
-  {
     label: 'Requests',
     href: '/farmer/requests',
     roles: ['seller', 'admin'],
@@ -88,6 +83,11 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   },
   // Buyer
   {
+    label: 'Dashboard',
+    href: '/buyer/dashboard',
+    roles: ['buyer', 'admin'],
+  },
+  {
     label: 'Browse',
     href: '/buyer/browse',
     roles: ['buyer', 'admin'],
@@ -95,11 +95,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   {
     label: 'My Orders',
     href: '/buyer/orders',
-    roles: ['buyer', 'admin'],
-  },
-  {
-    label: 'Cart',
-    href: '/buyer/cart',
     roles: ['buyer', 'admin'],
   },
   // Logistic
